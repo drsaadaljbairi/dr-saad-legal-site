@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - د. سعد الجبيري</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        * { font-family: 'Segoe UI', 'Arial Unicode MS', sans-serif; }
+        .sidebar { min-height: 100vh; }
+        .active-tab { background-color: #dc2626; color: white; }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-900 text-white sidebar">
+            <div class="p-6 border-b border-gray-700">
+                <h1 class="text-2xl font-bold">لوحة التحكم</h1>
+                <p class="text-gray-400 text-sm">إدارة الموقع</p>
+            </div>
+            <nav class="p-6 space-y-4">
+                <button class="w-full text-right py-3 px-4 rounded-lg hover:bg-gray-800 transition tab-btn active-tab" data-tab="dashboard">
+                    <i class="fas fa-chart-line ml-2"></i> لوحة التحكم
+                </button>
+                <button class="w-full text-right py-3 px-4 rounded-lg hover:bg-gray-800 transition tab-btn" data-tab="articles">
+                    <i class="fas fa-newspaper ml-2"></i> إدارة المقالات
+                </button>
+                <button class="w-full text-right py-3 px-4 rounded-lg hover:bg-gray-800 transition tab-btn" data-tab="services">
+                    <i class="fas fa-briefcase ml-2"></i> إدارة الخدمات
+                </button>
+                <button class="w-full text-right py-3 px-4 rounded-lg hover:bg-gray-800 transition tab-btn" data-tab="messages">
+                    <i class="fas fa-envelope ml-2"></i> الرسائل
+                </button>
+                <button class="w-full text-right py-3 px-4 rounded-lg hover:bg-gray-800 transition tab-btn" data-tab="settings">
+                    <i class="fas fa-cog ml-2"></i> الإعدادات
+                </button>
+                <hr class="border-gray-700 my-4">
+                <a href="index.html" class="w-full text-right py-3 px-4 rounded-lg hover:bg-gray-800 transition block">
+                    <i class="fas fa-arrow-left ml-2"></i> العودة للموقع
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1">
+            <!-- Header -->
+            <div class="bg-white shadow p-6 flex justify-between items-center">
+                <h2 id="pageTitle" class="text-3xl font-bold">لوحة التحكم</h2>
+                <div class="flex items-center gap-4">
+                    <span id="adminName" class="text-gray-700">مسئول الموقع</span>
+                    <button id="logoutBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                        <i class="fas fa-sign-out-alt ml-2"></i> تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content p-6 space-y-6">
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <div class="text-4xl text-red-600 mb-2"><i class="fas fa-newspaper"></i></div>
+                        <h3 class="text-gray-600 text-sm">عدد المقالات</h3>
+                        <p id="articlesCount" class="text-3xl font-bold">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <div class="text-4xl text-blue-600 mb-2"><i class="fas fa-envelope"></i></div>
+                        <h3 class="text-gray-600 text-sm">الرسائل المستقبلة</h3>
+                        <p id="messagesCount" class="text-3xl font-bold">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <div class="text-4xl text-green-600 mb-2"><i class="fas fa-briefcase"></i></div>
+                        <h3 class="text-gray-600 text-sm">الخدمات المتاحة</h3>
+                        <p id="servicesCount" class="text-3xl font-bold">3</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <div class="text-4xl text-purple-600 mb-2"><i class="fas fa-users"></i></div>
+                        <h3 class="text-gray-600 text-sm">عدد الزوار</h3>
+                        <p id="visitorsCount" class="text-3xl font-bold">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Articles Tab -->
+            <div id="articles-tab" class="tab-content p-6 space-y-6 hidden">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">إدارة المقالات</h2>
+                    <button id="addArticleBtn" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-bold">
+                        <i class="fas fa-plus ml-2"></i> إضافة مقالة
+                    </button>
+                </div>
+                <div id="articlesList" class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-200">
+                            <tr>
+                                <th class="p-4 text-right">العنوان</th>
+                                <th class="p-4 text-right">التاريخ</th>
+                                <th class="p-4 text-right">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="articlesTableBody" class="divide-y">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Services Tab -->
+            <div id="services-tab" class="tab-content p-6 space-y-6 hidden">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">إدارة الخدمات</h2>
+                    <button id="addServiceBtn" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-bold">
+                        <i class="fas fa-plus ml-2"></i> إضافة خدمة
+                    </button>
+                </div>
+                <div id="servicesList" class="grid md:grid-cols-3 gap-6">
+                </div>
+            </div>
+
+            <!-- Messages Tab -->
+            <div id="messages-tab" class="tab-content p-6 space-y-6 hidden">
+                <h2 class="text-2xl font-bold">الرسائل المستقبلة</h2>
+                <div id="messagesList" class="space-y-4">
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content p-6 space-y-6 hidden">
+                <h2 class="text-2xl font-bold">الإعدادات</h2>
+                <div class="bg-white p-6 rounded-lg shadow space-y-4">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">البريد الإلكتروني للاستقبال</label>
+                        <input type="email" id="emailSetting" class="w-full p-3 border rounded-lg" placeholder="your-email@example.com">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">رقم الهاتف</label>
+                        <input type="text" id="phoneSetting" class="w-full p-3 border rounded-lg" placeholder="+965 XXXX XXXX">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">الموقع الجغرافي</label>
+                        <input type="text" id="locationSetting" class="w-full p-3 border rounded-lg" placeholder="الكويت - حولي">
+                    </div>
+                    <button id="saveSettingsBtn" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-bold">
+                        <i class="fas fa-save ml-2"></i> حفظ الإعدادات
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Article Modal -->
+    <div id="articleModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg max-w-2xl w-full max-h-96 overflow-y-auto">
+            <h3 class="text-2xl font-bold mb-4">إضافة مقالة جديدة</h3>
+            <form id="articleForm" class="space-y-4">
+                <input type="text" id="articleTitle" placeholder="عنوان المقالة" required class="w-full p-3 border rounded-lg">
+                <textarea id="articleContent" placeholder="محتوى المقالة" rows="6" required class="w-full p-3 border rounded-lg resize-none"></textarea>
+                <input type="text" id="articleAuthor" placeholder="اسم الكاتب" required class="w-full p-3 border rounded-lg">
+                <div class="flex gap-4">
+                    <button type="submit" class="flex-1 bg-red-600 text-white p-3 rounded-lg hover:bg-red-700 font-bold">حفظ المقالة</button>
+                    <button type="button" id="closeArticleModal" class="flex-1 bg-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-400 font-bold">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Service Modal -->
+    <div id="serviceModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg max-w-2xl w-full">
+            <h3 class="text-2xl font-bold mb-4">إضافة خدمة جديدة</h3>
+            <form id="serviceForm" class="space-y-4">
+                <input type="text" id="serviceName" placeholder="اسم الخدمة" required class="w-full p-3 border rounded-lg">
+                <textarea id="serviceDesc" placeholder="وصف الخدمة" rows="4" required class="w-full p-3 border rounded-lg resize-none"></textarea>
+                <input type="text" id="serviceIcon" placeholder="أيقونة (مثل: fa-balance-scale)" class="w-full p-3 border rounded-lg">
+                <div class="flex gap-4">
+                    <button type="submit" class="flex-1 bg-red-600 text-white p-3 rounded-lg hover:bg-red-700 font-bold">حفظ الخدمة</button>
+                    <button type="button" id="closeServiceModal" class="flex-1 bg-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-400 font-bold">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
